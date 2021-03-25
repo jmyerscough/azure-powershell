@@ -53,6 +53,9 @@
   # Tweaks the pipeline per call
   $instance.OnNewRequest = $VTable.OnNewRequest
   
+  # Tweaks the pipeline per call
+  $instance.OnNewRequestV2 = $VTable.OnNewRequestV2
+  
   # Gets shared parameter values
   $instance.GetParameterValue = $VTable.GetParameterValue
   

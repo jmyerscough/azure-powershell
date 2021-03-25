@@ -68,10 +68,30 @@ namespace Microsoft.Azure.Commands.Common
         /// <param name="processRecordId">The <see cref="string" /> containing the correlation id for the individual process record. (if available)</param>
         /// <param name="prependStep">a delegate which allows the module to prepend a step in the HTTP Pipeline</param>
         /// <param name="appendStep">a delegate which allows the module to append a step in the HTTP Pipeline</param>
-        public void OnNewRequest(InvocationInfo invocationInfo, string correlationId, string processRecordId, PipelineChangeDelegate prependStep, PipelineChangeDelegate appendStep)
+        public void OnNewRequest(
+            InvocationInfo invocationInfo, 
+            string correlationId, 
+            string processRecordId, 
+            PipelineChangeDelegate prependStep, 
+            PipelineChangeDelegate appendStep)
         {
             appendStep(new UserAgent(invocationInfo).SendAsync);
             appendStep(this.SendHandler(GetDefaultContext(_provider, invocationInfo), AzureEnvironment.Endpoint.ResourceManager));
+        }
+
+        public void OnNewRequestV2(
+            InvocationInfo invocationInfo,
+            string correlationId,
+            string processRecordId,
+            string resourceId,
+            int httpPiplelineFlags,
+            IDictionary<string, object> extensibleParameters,
+            PipelineChangeDelegate prependStep,
+            PipelineChangeDelegate appendStep)
+        {
+            appendStep(new UserAgent(invocationInfo).SendAsync);
+            bool enableAuthentication = (httpPiplelineFlags & 0x1) == 0x1;//TODO: 
+            appendStep(this.SendHandler(GetDefaultContext(_provider, invocationInfo), resourceId ?? AzureEnvironment.Endpoint.ResourceManager, enableAuthentication));
         }
 
         /// <summary>
@@ -151,12 +171,15 @@ namespace Microsoft.Azure.Commands.Common
         /// <param name="context"></param>
         /// <param name="resourceId"></param>
         /// <returns></returns>
-        internal Func<HttpRequestMessage, CancellationToken, Action, SignalDelegate, NextDelegate, Task<HttpResponseMessage>> SendHandler(IAzureContext context, string resourceId)
+        internal Func<HttpRequestMessage, CancellationToken, Action, SignalDelegate, NextDelegate, Task<HttpResponseMessage>> SendHandler(IAzureContext context, string resourceId, bool enableAuthentication = true)
         {
             return async (request, cancelToken, cancelAction, signal, next) =>
             {
                 PatchRequestUri(context, request);
-                await AuthorizeRequest(context, resourceId, request, cancelToken);
+                if (enableAuthentication)
+                {
+                    await AuthorizeRequest(context, resourceId, request, cancelToken);
+                }
                 return await next(request, cancelToken, cancelAction, signal);
             };
         }

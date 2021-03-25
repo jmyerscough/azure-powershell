@@ -11,10 +11,13 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration
     using GetParameterDelegate = global::System.Func<string, string, global::System.Management.Automation.InvocationInfo, string, string, object>;
     using ModuleLoadPipelineDelegate = global::System.Action<string, string, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>>;
     using NewRequestPipelineDelegate = global::System.Action<global::System.Management.Automation.InvocationInfo, string, string, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>>;
+    using NewRequestPipelineDelegateV2 = global::System.Action<global::System.Management.Automation.InvocationInfo, string, string, string, int, global::System.Collections.Generic.IDictionary<string, object>, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>, global::System.Action<global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>>>;
     using ArgumentCompleterDelegate = global::System.Func<string, global::System.Management.Automation.InvocationInfo, string, string[], string[], string[]>;
     using SignalDelegate = global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>;
     using EventListenerDelegate = global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Management.Automation.InvocationInfo, string, string, string, global::System.Exception, global::System.Threading.Tasks.Task>;
     using NextDelegate = global::System.Func<global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken, global::System.Action, global::System.Func<string, global::System.Threading.CancellationToken, global::System.Func<global::System.EventArgs>, global::System.Threading.Tasks.Task>, global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>>;
+    using System.Collections.Generic;
+    using Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Runtime;
 
     /// <summary>A class that contains the module-common code and data.</summary>
     public partial class Module
@@ -47,6 +50,10 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration
         /// <summary>Backing field for <see cref="Instance" /> property.</summary>
         private static Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Module _instance;
 
+        private string _resourceId = null;
+
+        private HttpPipelineBuiltInPolicy _httpPipelineBuiltInPolicy = HttpPipelineBuiltInPolicy.All;
+
         /// <summary>the singleton of this module class</summary>
         public static Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Module Instance => Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Module._instance?? (Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Module._instance = new Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Module());
 
@@ -58,6 +65,9 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration
 
         /// <summary>The delegate to call before each new request (supporting a commmon module).</summary>
         public NewRequestPipelineDelegate OnNewRequest { get; set; }
+
+        /// <summary>The delegate to call before each new request (supporting a commmon module).</summary>
+        public NewRequestPipelineDelegateV2 OnNewRequestV2 { get; set; }
 
         /// <summary>The name of the currently selected Azure profile</summary>
         public global::System.String ProfileName { get; set; }
@@ -77,20 +87,28 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration
 
         partial void CustomInit();
 
+        partial void CustomizeAuthenticationHandler(IDictionary<string, object> extensibleParameters, ref SendAsyncStepDelegate authDelegate);
+
         /// <summary>Creates an instance of the HttpPipeline for each call.</summary>
         /// <param name="invocationInfo">The <see cref="System.Management.Automation.InvocationInfo" /> from the cmdlet</param>
         /// <param name="correlationId">the cmdlet's correlation id.</param>
         /// <param name="processRecordId">the cmdlet's process record correlation id.</param>
         /// <param name="parameterSetName">the cmdlet's parameterset name.</param>
         /// <returns>An instance of Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Runtime.HttpPipeline for the remote call.</returns>
-        public Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Runtime.HttpPipeline CreatePipeline(global::System.Management.Automation.InvocationInfo invocationInfo, string correlationId, string processRecordId, string parameterSetName = null)
+        public Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Runtime.HttpPipeline CreatePipeline(global::System.Management.Automation.InvocationInfo invocationInfo, string correlationId, string processRecordId, string parameterSetName = null, IDictionary<string, object> extensibleParameters = null)
         {
             Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration.Runtime.HttpPipeline pipeline = null;
             BeforeCreatePipeline(invocationInfo, ref pipeline);
             pipeline = (pipeline ?? (_handler.UseProxy ? _pipelineWithProxy : _pipeline)).Clone();
             AfterCreatePipeline(invocationInfo, ref pipeline);
             pipeline.Append(new Runtime.CmdInfoHandler(processRecordId, invocationInfo, parameterSetName).SendAsync);
-            OnNewRequest?.Invoke( invocationInfo, correlationId,processRecordId, (step)=> { pipeline.Prepend(step); } , (step)=> { pipeline.Append(step); } );
+            SendAsyncStepDelegate authDelegate = null;
+            CustomizeAuthenticationHandler(extensibleParameters, ref authDelegate);
+            OnNewRequestV2?.Invoke(invocationInfo, correlationId, processRecordId, _resourceId, (int)_httpPipelineBuiltInPolicy, extensibleParameters, (step) => { pipeline.Prepend(step); }, (step) => { pipeline.Append(step); });
+            if (authDelegate != null)
+            {
+                pipeline.Append(authDelegate);
+            }
             return pipeline;
         }
 
@@ -153,6 +171,16 @@ namespace Microsoft.Azure.PowerShell.Cmdlets.AppConfiguration
             {
                 await EventListener?.Invoke(id,token,getEventData, signal, invocationInfo, parameterSetName, correlationId,processRecordId,exception);
             }
+        }
+
+        //TODO: move to common assembly
+        [System.Flags]
+        public enum HttpPipelineBuiltInPolicy
+        {
+            None = 0x0,
+            BearToken = 0x1,
+            Telemetry = 0x2,
+            All = BearToken | Telemetry
         }
     }
 }
